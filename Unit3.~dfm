@@ -1,8 +1,8 @@
 object Form3: TForm3
-  Left = 372
-  Top = 205
+  Left = 415
+  Top = 204
   Width = 479
-  Height = 255
+  Height = 331
   Caption = #33406#33713#20381#33258#21160#20998#33719#31995#32479
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -14,6 +14,16 @@ object Form3: TForm3
   OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 12
+  object RzProgressBar1: TRzProgressBar
+    Left = 16
+    Top = 216
+    Width = 425
+    BorderWidth = 0
+    InteriorOffset = 0
+    PartsComplete = 0
+    Percent = 0
+    TotalParts = 0
+  end
   object RzGroupBox1: TRzGroupBox
     Left = 16
     Top = 16

@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 412
-  Top = 109
+  Left = 244
+  Top = 146
   BorderStyle = bsSingle
   Caption = #33406#33713#20381#33258#21160#20998#36135#31995#32479
   ClientHeight = 462
@@ -144,6 +144,15 @@ object Form1: TForm1
         Text = #35831#36873#25321#25991#20214
         Width = 50
       end>
+  end
+  object BitBtn4: TBitBtn
+    Left = 56
+    Top = 384
+    Width = 75
+    Height = 25
+    Caption = #21435#38500#37325#22797
+    TabOrder = 8
+    OnClick = BitBtn4Click
   end
   object OpenDialog1: TOpenDialog
     Options = [ofHideReadOnly, ofAllowMultiSelect, ofEnableSizing]

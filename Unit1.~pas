@@ -30,6 +30,7 @@ type
     StatusBar1: TStatusBar;
     N5: TMenuItem;
     N6: TMenuItem;
+    BitBtn4: TBitBtn;
     procedure Button3Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -37,6 +38,7 @@ type
     procedure BitBtn3Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
+    procedure BitBtn4Click(Sender: TObject);
   private
     procedure startAutoReorganize;
     { Private declarations }
@@ -52,6 +54,7 @@ type
     fahuoListMaxCol:Integer;
     dinghuoListMaxRow:Integer;
     dinghuoListMaxCol:Integer;
+    fahuoListChongFuRow:TStringList;
   end;
 
 var
@@ -93,7 +96,6 @@ dinghuoListPath := TStringList.Create;
 Form2.RzProgressBar1.TotalParts:= fahuoListMaxRow-3;
 if listbox1.Items.Count<>0 then
 begin
-  Form2.Show;
   Form2.Label1.Left := Round((Form2.Width - Form2.Label1.Width) / 2) ;
   m:=0;
   j:=0;
@@ -196,7 +198,7 @@ ExcelApp3.Caption:='应用程序调用 Microsoft Excel';
 ExcelApp3.visible:=true;
 ExcelApp3.workBooks.Open(Edit2.Text); //打开已存在工作簿
 fahuoListMaxRow:= ExcelApp3.WorkSheets[1].UsedRange.Rows.Count;
-fahuoListMaxCol:= ExcelApp3.WorkSheets[1].UsedRange.Columns.Count;
+fahuoListMaxCol:= ExcelApp3.WorkSheets[1].UsedRange.Columns.Count;     
 for i:=(fahuoListMaxCol+1) to fahuoListMaxCol+dinghuorenList.Count do
 begin
   ExcelApp3.Cells[1,i].Value:= dinghuorenList[i-fahuoListMaxCol-1]+'配货量';
@@ -371,6 +373,7 @@ ExcelApp1.workBooks.Open(Edit2.Text); //打开已存在工作簿
 excel1OpenFlag := true;
 fahuoListMaxRow:= ExcelApp1.WorkSheets[1].UsedRange.Rows.Count;
 fahuoListMaxCol:= ExcelApp1.WorkSheets[1].UsedRange.Columns.Count;
+fahuoListChongFuRow := TStringList.Create;
 for i:=1 to  fahuoListMaxCol do
 begin
   if ExcelApp1.Cells[1,i].Value='款号' then
@@ -382,6 +385,7 @@ begin
   if ExcelApp1.Cells[1,i].Value='本次配货量' then
      fahuolistPeihuoliangCol:=i;
 end;
+
 end;
 end;
 
@@ -411,9 +415,39 @@ begin
   Form1.Hide;
   BitBtn3.Enabled:=false;
   BitBtn2.Enabled:=false;
-  Button3.Click;
+  Bitbtn4.Click;
 end;
 
+end;
+
+procedure TForm1.BitBtn4Click(Sender: TObject);
+var
+j,k,m:Integer;
+begin
+ Form2.Show;
+ Form2.RzProgressBar1.TotalParts:= fahuoListMaxRow-3;
+ Form2.Label1.Caption:= '正在去除发货清单重复，请稍候...';     
+for j:=2 to fahuoListMaxRow-2 do
+begin
+  Form2.RzProgressBar1.PartsComplete:= j-2;
+  for k:=j+1 to  fahuoListMaxRow-1 do
+  begin
+     if (Trim(ExcelApp1.Cells[j,fahuoListKuanHaoCol].Value) = Trim(ExcelApp1.Cells[k,fahuoListKuanHaoCol].Value)) and
+        (Trim(ExcelApp1.Cells[j,fahuoListYanSeCol].Value) = Trim(ExcelApp1.Cells[k,fahuoListYanSeCol].Value))
+        and (Trim(ExcelApp1.Cells[j,fahuoListChiMaCol].Value) = Trim(ExcelApp1.Cells[k,fahuoListChiMaCol].Value)) then
+        begin         
+           ExcelApp1.Cells[j,fahuolistPeihuoliangCol].Value:=inttostr(strtoint(Trim(ExcelApp1.Cells[j,fahuolistPeihuoliangCol].Value))+strtoint(Trim(ExcelApp1.Cells[k,fahuolistPeihuoliangCol].Value)));
+           fahuoListChongFuRow.Add(inttostr(k));
+           break;
+        end;   
+  end;
+end;
+for  m:=0 to fahuoListChongFuRow.Count-1 do
+begin
+   ExcelApp1.ActiveSheet.Rows[strtoint(fahuoListChongFuRow[m])].Delete;
+   //fahuoListMaxRow := fahuoListMaxRow-fahuoListChongFuRow.Count;
+end;
+ Button3.Click;
 end;
 
 end.
