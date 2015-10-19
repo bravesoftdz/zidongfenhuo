@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 278
-  Top = 114
+  Left = 408
+  Top = 103
   BorderStyle = bsSingle
   Caption = #33406#33713#20381#33258#21160#20998#36135#31995#32479
   ClientHeight = 462
@@ -152,6 +152,7 @@ object Form1: TForm1
     Height = 25
     Caption = #21435#38500#37325#22797
     TabOrder = 8
+    Visible = False
     OnClick = BitBtn4Click
   end
   object OpenDialog1: TOpenDialog
