@@ -4,12 +4,12 @@ object Form1: TForm1
   BorderStyle = bsSingle
   Caption = #33406#33713#20381#33258#21160#20998#36135#31995#32479
   ClientHeight = 462
-  ClientWidth = 497
+  ClientWidth = 458
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
-  Font.Name = #24494#36719#38597#40657
+  Font.Name = #23435#20307
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
@@ -17,7 +17,7 @@ object Form1: TForm1
   OnClose = FormClose
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 17
+  TextHeight = 12
   object Button3: TButton
     Left = 360
     Top = 376
@@ -32,7 +32,7 @@ object Form1: TForm1
     Left = 24
     Top = 520
     Width = 353
-    Height = 25
+    Height = 20
     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
     TabOrder = 1
     Visible = False
@@ -51,14 +51,14 @@ object Form1: TForm1
     Left = 392
     Top = 528
     Width = 177
-    Height = 25
+    Height = 20
     ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
     TabOrder = 3
     Text = 'Edit1'
     Visible = False
   end
   object BitBtn1: TBitBtn
-    Left = 183
+    Left = 174
     Top = 368
     Width = 120
     Height = 40
@@ -73,7 +73,7 @@ object Form1: TForm1
     OnClick = BitBtn1Click
   end
   object GroupBox1: TGroupBox
-    Left = 36
+    Left = 16
     Top = 32
     Width = 425
     Height = 105
@@ -83,12 +83,12 @@ object Form1: TForm1
       Left = 32
       Top = 60
       Width = 353
-      Height = 25
+      Height = 20
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
       TabOrder = 0
     end
     object BitBtn3: TBitBtn
-      Left = 160
+      Left = 169
       Top = 16
       Width = 90
       Height = 30
@@ -98,7 +98,7 @@ object Form1: TForm1
     end
   end
   object GroupBox2: TGroupBox
-    Left = 36
+    Left = 16
     Top = 152
     Width = 425
     Height = 201
@@ -110,12 +110,12 @@ object Form1: TForm1
       Width = 353
       Height = 105
       ImeName = #20013#25991'('#31616#20307') - '#25628#29399#25340#38899#36755#20837#27861
-      ItemHeight = 17
+      ItemHeight = 12
       TabOrder = 0
     end
     object BitBtn2: TBitBtn
-      Left = 158
-      Top = 16
+      Left = 169
+      Top = 27
       Width = 90
       Height = 30
       Caption = #25171#24320#35746#36135#28165#21333
@@ -126,7 +126,7 @@ object Form1: TForm1
   object StatusBar1: TStatusBar
     Left = 0
     Top = 443
-    Width = 497
+    Width = 458
     Height = 19
     Panels = <
       item
@@ -141,7 +141,7 @@ object Form1: TForm1
       end
       item
         Alignment = taCenter
-        Text = #35831#36873#25321#25991#20214
+        Text = #36719#20214#20316#32773#65306'zy'
         Width = 50
       end>
   end
@@ -171,18 +171,22 @@ object Form1: TForm1
       Caption = #25171#24320#25991#20214
       object N3: TMenuItem
         Caption = #25171#24320#21457#36135#28165#21333
+        OnClick = N3Click
       end
       object N4: TMenuItem
         Caption = #25171#24320#35746#36135#28165#21333
+        OnClick = N4Click
       end
     end
     object N2: TMenuItem
       Caption = #24320#22987#20998#36135
+      OnClick = N2Click
     end
     object N5: TMenuItem
       Caption = #24110#21161
       object N6: TMenuItem
         Caption = #20351#29992#36719#20214#24517#35835
+        OnClick = N6Click
       end
     end
   end

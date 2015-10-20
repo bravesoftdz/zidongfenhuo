@@ -16,6 +16,7 @@ type
     BitBtn2: TBitBtn;
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
   public
@@ -58,6 +59,11 @@ procedure TForm2.BitBtn2Click(Sender: TObject);
 begin
   Form2.Hide;
   Form3.Show;
+end;
+
+procedure TForm2.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+Form1.Close;
 end;
 
 end.

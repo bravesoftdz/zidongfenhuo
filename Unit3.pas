@@ -8,14 +8,11 @@ uses
 
 type
   TForm3 = class(TForm)
-    Label1: TLabel;
-    Label2: TLabel;
     Edit1: TEdit;
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
     OpenDialog1: TOpenDialog;
     RzGroupBox1: TRzGroupBox;
-    RzProgressBar1: TRzProgressBar;
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -45,7 +42,7 @@ var
 
 implementation
 
-uses Unit1, Unit2;
+uses Unit1, Unit2, Unit4;
 
 {$R *.dfm}
 
@@ -66,7 +63,7 @@ begin
 ExcelApp1:=CreateOleObject('Excel.Application');
 ExcelApp1.Caption:='应用程序调用 Microsoft Excel';
 ExcelApp1.workBooks.Open(Edit1.Text); //打开已存在工作簿
-ExcelApp1.Visible:=true;
+//ExcelApp1.Visible:=true;
 ExcelApp1.WorkSheets[1].Activate;
 //excel1OpenFlag := true;
 fahuoListMaxRow:= ExcelApp1.ActiveSheet.UsedRange.Rows.Count;
@@ -95,17 +92,21 @@ end;
 
 procedure TForm3.BitBtn2Click(Sender: TObject);
 var
-i,j,k,m:Integer;
+i,j,k,m,n:Integer;
 dinghuoListMaxRow:Integer;
 dinghuoListMaxCol:Integer;
 yipeihuoliangCol:Integer;
 begin
+  Form4.Show;
+  Form3.Hide;
   for  i:=0 to Form1.dinghuoListPath.Count-1 do
   begin
+    Form4.Label1.Left := Round((Form2.Width - Form2.Label1.Width) / 2) ;
+    Form4.Label1.Caption:= '正在处理第'+inttostr(i+1)+'个订单，共'+inttostr(Form1.dinghuoListPath.Count)+'个';
     ExcelApp2:=CreateOleObject('Excel.Application');
     ExcelApp2.Caption:='应用程序调用 Microsoft Excel';
     ExcelApp2.workBooks.Open(Form1.dinghuoListPath[i]); //打开已存在工作簿
-    ExcelApp2.Visible:=true;
+   // ExcelApp2.Visible:=true;
     ExcelApp2.WorkSheets[1].Activate;
     dinghuoListMaxRow:=ExcelApp2.ActiveSheet.UsedRange.Rows.Count;
     dinghuoListMaxCol:= ExcelApp2.ActiveSheet.UsedRange.Columns.Count;
@@ -128,30 +129,38 @@ begin
       ExcelApp2.ActiveSheet.Cells[1,dinghuoListMaxCol+1].Value:= '已配货量';
       yipeihuoliangCol:=dinghuoListMaxCol+1;
     end;
-    Form3.RzProgressBar1.TotalParts:= Form1.fahuoListMaxRow-3;
+    Form4.RzProgressBar1.TotalParts:= Form1.fahuoListMaxRow-3;
     for k:=2 to Form1.fahuoListMaxRow-1 do
     begin
-    Form3.RzProgressBar1.PartsComplete:=k-2;
+    Form4.RzProgressBar1.PartsComplete:=k-2;
       for j:=2 to   dinghuoListMaxRow-1 do
       begin
-        ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value:= '0';
+        Application.ProcessMessages;
+        //ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value:= '0';
         if (Trim(ExcelApp2.ActiveSheet.Cells[j,dinghuoListKuanHaoCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListKuanHaoCol].Value)) and
         (Trim(ExcelApp2.ActiveSheet.Cells[j,dinghuoListYanSeCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListYanSeCol].Value))
         and (Trim(ExcelApp2.ActiveSheet.Cells[j,dinghuoListChiMaCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListChiMaCol].Value)) then
         begin
-           //if Trim(ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value) = '' then
-          // begin
-              //ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value:= Trim(ExcelApp1.ActiveSheet.Cells[k,strtoint(dinghuorenCol.ValueFromIndex[i])].Value);
-              //ExcelApp2.ActiveSheet.Cells[j,dinghuoListShuLiangCol].Value:=inttostr(strtoint(Trim(ExcelApp2.ActiveSheet.Cells[j,dinghuoListShuLiangCol].Value)) - strtoint(Trim(ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value)));
-              //break;
-           //end else
-           //begin
-              ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value:= inttostr(strtoint(Trim(ExcelApp1.Cells[k,strtoint(dinghuorenCol.ValueFromIndex[i])].Value)) + strtoint(Trim(ExcelApp2.Cells[j,yipeihuoliangCol].Value)));
-              ExcelApp2.ActiveSheet.Cells[j,dinghuoListShuLiangCol].Value:=inttostr(strtoint(Trim(ExcelApp2.Cells[j,dinghuoListShuLiangCol].Value)) - strtoint(Trim(ExcelApp2.Cells[j,yipeihuoliangCol].Value)));
+           if Trim(ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value) = '' then
+           begin
+              ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value:= Trim(ExcelApp1.ActiveSheet.Cells[k,strtoint(dinghuorenCol.ValueFromIndex[i])].Value);
+              ExcelApp2.ActiveSheet.Cells[j,dinghuoListShuLiangCol].Value:=inttostr(strtoint(Trim(ExcelApp2.ActiveSheet.Cells[j,dinghuoListShuLiangCol].Value)) - strtoint(Trim(ExcelApp1.ActiveSheet.Cells[k,strtoint(dinghuorenCol.ValueFromIndex[i])].Value)));
               break;
-          // end;
+           end else
+           begin
+              ExcelApp2.ActiveSheet.Cells[j,yipeihuoliangCol].Value:= inttostr(strtoint(Trim(ExcelApp1.Cells[k,strtoint(dinghuorenCol.ValueFromIndex[i])].Value)) + strtoint(Trim(ExcelApp2.Cells[j,yipeihuoliangCol].Value)));
+              ExcelApp2.ActiveSheet.Cells[j,dinghuoListShuLiangCol].Value:=inttostr(strtoint(Trim(ExcelApp2.Cells[j,dinghuoListShuLiangCol].Value)) - strtoint(Trim(ExcelApp1.Cells[k,strtoint(dinghuorenCol.ValueFromIndex[i])].Value)));
+              break;
+           end;
         end;
       end;
+    end;
+    for  n:=2 to dinghuoListMaxRow-1 do
+    begin
+       if Trim(ExcelApp2.ActiveSheet.Cells[n,yipeihuoliangCol].Value) = '' then
+       begin
+          ExcelApp2.ActiveSheet.Cells[n,yipeihuoliangCol].Value:='0';
+       end;
     end;
    // ExcelApp2.saveAS(ExtractFileName(Form1.dinghuoListPath[i]+'(' + inttostr(i) + ')'));    //保存
     ExcelApp2.ActiveWorkBook.save;  
@@ -163,6 +172,7 @@ begin
   ExcelApp1.WorkBooks.Close; //关闭工作簿
   ExcelApp1.Quit; //退出 Excel
   ExcelApp1:=Unassigned;//释放excel进程
+  Form4.BitBtn1.Enabled:=true;
 end;
 
 procedure TForm3.FormClose(Sender: TObject; var Action: TCloseAction);

@@ -11,6 +11,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := '艾莱依自动分货系统';
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TForm2, Form2);
   Application.CreateForm(TForm3, Form3);

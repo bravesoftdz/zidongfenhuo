@@ -39,6 +39,10 @@ type
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn4Click(Sender: TObject);
+    procedure N3Click(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+    procedure N2Click(Sender: TObject);
+    procedure N6Click(Sender: TObject);
   private
     procedure startAutoReorganize;
     { Private declarations }
@@ -80,53 +84,9 @@ var
 
 implementation
 
-uses Unit2;
+uses Unit2, Unit5;
 
 {$R *.dfm}
-
-
-procedure QuChongThread;
-var
-j,k,m,i:Integer;
-begin
- Form2.Show;
- fahuoListChongFuRow := TStringList.Create;
- Form2.RzProgressBar1.TotalParts:= fahuoListMaxRow-3;
- Form2.Label1.Caption:= '正在去除发货清单重复，请稍候...';
-for j:=2 to fahuoListMaxRow-2 do
-begin
-  Form2.RzProgressBar1.PartsComplete:= j-2;
-  for k:=j+1 to  fahuoListMaxRow-1 do
-  begin
-     if (Trim(ExcelApp1.ActiveSheet.Cells[j,fahuoListKuanHaoCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListKuanHaoCol].Value)) and
-        (Trim(ExcelApp1.ActiveSheet.Cells[j,fahuoListYanSeCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListYanSeCol].Value))
-        and (Trim(ExcelApp1.ActiveSheet.Cells[j,fahuoListChiMaCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListChiMaCol].Value)) then
-        begin
-           ExcelApp1.ActiveSheet.Cells[j,fahuolistPeihuoliangCol].Value:=inttostr(strtoint(Trim(ExcelApp1.ActiveSheet.Cells[j,fahuolistPeihuoliangCol].Value))+strtoint(Trim(ExcelApp1.ActiveSheet.Cells[k,fahuolistPeihuoliangCol].Value)));
-           fahuoListChongFuRow.Add(inttostr(k));
-           break;
-        end;
-  end;
-end;
-for  m:=0 to fahuoListChongFuRow.Count-1 do
-begin
-   ExcelApp1.ActiveSheet.Rows[strtoint(fahuoListChongFuRow[m])-m].Delete;
-end;
-   fahuoListMaxRow:= ExcelApp1.ActiveSheet.UsedRange.Rows.Count;
-   fahuoListMaxCol:= ExcelApp1.ActiveSheet.UsedRange.Columns.Count;
-   for i:=1 to  fahuoListMaxCol do
-   begin
-      if ExcelApp1.ActiveSheet.Cells[1,i].Value='款号' then
-        fahuoListKuanHaoCol:=i;
-      if ExcelApp1.ActiveSheet.Cells[1,i].Value='颜色' then
-        fahuoListYanSeCol:=i;
-      if ExcelApp1.ActiveSheet.Cells[1,i].Value='尺码' then
-        fahuoListChiMaCol:=i;
-      if ExcelApp1.ActiveSheet.Cells[1,i].Value='本次配货量' then
-        fahuolistPeihuoliangCol:=i;
-   end;
- Button3.Click;
-end;
 
 
 
@@ -140,12 +100,13 @@ dinghuoListPath := TStringList.Create;
 Form2.RzProgressBar1.TotalParts:= fahuoListMaxRow-3;
 if listbox1.Items.Count<>0 then
 begin
-  Form2.Label1.Left := Round((Form2.Width - Form2.Label1.Width) / 2) ;
   m:=0;
   j:=0;
   i:=0;
   for m:=0 to listbox1.Items.Count-1 do
   begin
+    Form2.Label1.Caption:= '正在处理第'+inttostr(m+1)+'个订货清单，共'+inttostr(listbox1.Items.Count)+'个，请稍候...';
+    Form2.Label1.Left := Round((Form2.Width - Form2.Label1.Width) / 2) ;
     dinghuoListPath.Add(listbox1.Items[m]);
     ExcelApp2:=CreateOleObject('Excel.Application');
    // ExcelApp2.visible:=true;
@@ -153,7 +114,6 @@ begin
     ExcelApp2.workBooks.Open(listbox1.Items[m]); //打开已存在工作簿
     //Edit1.Text:=ExcelApp2.WorkSheets[1].Cells.Find('po');
     ExcelApp2.WorkSheets[1].Activate;
-    Form2.Label1.Caption:= '正在处理第'+inttostr(m+1)+'个订货清单，共'+inttostr(listbox1.Items.Count)+'个，请稍候...';
     dinghuoren := Copy(ExtractFileName(listbox1.Items[m]), 0, pos('订',ExtractFileName(listbox1.Items[m]))-1);
     excel2OpenFlag := true;
     dinghuoListMaxRow:=ExcelApp2.ActiveSheet.UsedRange.Rows.Count;
@@ -173,16 +133,18 @@ begin
     dinghuorenList.Add(dinghuoren);
     for k:=2 to fahuoListMaxRow-1 do
     begin
+     Application.ProcessMessages;
       Form2.RzProgressBar1.PartsComplete:=k-2;
       for j:=2 to dinghuoListMaxRow-1 do      
       begin
+       Application.ProcessMessages;
         if (Trim(ExcelApp2.ActiveSheet.Cells[j,dinghuoListKuanHaoCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListKuanHaoCol].Value)) and
         (Trim(ExcelApp2.ActiveSheet.Cells[j,dinghuoListYanSeCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListYanSeCol].Value))
         and (Trim(ExcelApp2.ActiveSheet.Cells[j,dinghuoListChiMaCol].Value) = Trim(ExcelApp1.ActiveSheet.Cells[k,fahuoListChiMaCol].Value)) then
         begin
           ExcelApp1.ActiveSheet.Cells[k,fahuoListMaxCol+m+1].Value:= ExcelApp2.ActiveSheet.Cells[j,dinghuoListShuLiangCol].Value;
           break;
-        end else
+        end else                    
         begin
           if j=dinghuoListMaxRow-1 then
             ExcelApp1.ActiveSheet.Cells[k,fahuoListMaxCol+m+1].Value:= '0';
@@ -271,6 +233,7 @@ Form2.Label1.Caption:='正在自动分货，请稍候...' ;
 Form2.Label1.Left := Round((Form2.Width - Form2.Label1.Width) / 2) ;
 for k:=2 to fahuoListMaxRow-1 do
 begin
+  Application.ProcessMessages;
   Form2.RzProgressBar1.PartsComplete:=k-2;
   dinghuozhanbiList:= TStringList.Create;
   dinghuozhanbiList.Sorted:=true;
@@ -297,7 +260,7 @@ begin
     begin
       if peihuoSum > dinghuoSum then
       begin
-        ExcelApp3.ActiveSheet.Rows[k].Font.Color := clRed;
+        ExcelApp3.ActiveSheet.Rows[k].Font.Color := clBlue;
         ExcelApp3.ActiveSheet.Rows[k].Font.Bold := True;
         ExcelApp3.ActiveSheet.Cells[k,j+dinghuorenList.Count].Value:=ExcelApp3.ActiveSheet.Cells[k,j].Value;
       end else
@@ -306,7 +269,7 @@ begin
       end;
     end else
     begin
-      ExcelApp3.ActiveSheet.Rows[k].Font.Color := clBlue;
+      ExcelApp3.ActiveSheet.Rows[k].Font.Color := clRed;
       ExcelApp3.ActiveSheet.Rows[k].Font.Bold := True;
       dinghuozhanbiList.Add(floattostr(strtoint(Trim(ExcelApp3.ActiveSheet.Cells[k,j].Value))/dinghuoSum)+'='+inttostr(j));
     end;
@@ -374,10 +337,15 @@ begin
               if peihuoSum-yifenpeiSum > strtoint(Trim(ExcelApp3.Cells[k,strtoint(dinghuozhanbiList.ValueFromIndex[0])].Value))  then
                 begin
                    ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[dinghuozhanbiList.Count-1]))+dinghuorenList.Count].Value:=inttostr(strtoint(ExcelApp3.ActiveSheet.Cells[k,strtoint(dinghuozhanbiList.ValueFromIndex[dinghuozhanbiList.Count-1])+dinghuorenList.Count].Value)+peihuoSum-yifenpeiSum-strtoint(ExcelApp3.ActiveSheet.Cells[k,strtoint(dinghuozhanbiList.ValueFromIndex[0])].Value));
+                   if strtoint(ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[dinghuozhanbiList.Count-1]))+dinghuorenList.Count].Value) > strtoint(ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[dinghuozhanbiList.Count-1]))].Value) then
+                   begin
+                     ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[dinghuozhanbiList.Count-2]))+dinghuorenList.Count].Value:=inttostr(strtoint(ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[dinghuozhanbiList.Count-2]))+dinghuorenList.Count].Value) + 1);
+                     ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[dinghuozhanbiList.Count-1]))+dinghuorenList.Count].Value:=inttostr(strtoint(ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[dinghuozhanbiList.Count-1]))+dinghuorenList.Count].Value) - 1);
+                   end;
                    ExcelApp3.ActiveSheet.Cells[k,strtoint(dinghuozhanbiList.ValueFromIndex[0])+dinghuorenList.Count].Value:= ExcelApp3.ActiveSheet.Cells[k,strtoint(dinghuozhanbiList.ValueFromIndex[0])].Value;
                 end else
                 begin
-                  ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[0]))+dinghuorenList.Count].Value:= inttostr(peihuoSum-yifenpeiSum);
+                     ExcelApp3.ActiveSheet.Cells[k,strtoint(Trim(dinghuozhanbiList.ValueFromIndex[0]))+dinghuorenList.Count].Value:= inttostr(peihuoSum-yifenpeiSum);
                 end;
             end;
           end;
@@ -412,10 +380,11 @@ begin
 end;
 if Edit2.Text<>'' then
 begin
+Form1.StatusBar1.Panels[0].Text:='已选择发货清单';
 ExcelApp1:=CreateOleObject('Excel.Application');
 ExcelApp1.Caption:='应用程序调用 Microsoft Excel';
 ExcelApp1.workBooks.Open(Edit2.Text); //打开已存在工作簿     
-ExcelApp1.Visible:=true;
+//ExcelApp1.Visible:=true;
 ExcelApp1.WorkSheets[1].Activate;
 excel1OpenFlag := true;
 fahuoListMaxRow:= ExcelApp1.ActiveSheet.UsedRange.Rows.Count;
@@ -443,6 +412,7 @@ Opendialog1.Filter:='(EXCEL文件,可一次打开多个文件.xls)|*.xls';//用“|”分开
 Opendialog1.InitialDir:='C:\Users\Administrator\Desktop';
 if OpenDialog1.Execute then
 begin
+  Form1.StatusBar1.Panels[0].Text:='已选择订货清单';
   for j:=0 to Opendialog1.Files.Count-1 do
   begin
       listbox1.Items.Add(OpenDialog1.Files.Strings[j]);
@@ -474,8 +444,10 @@ begin
  fahuoListChongFuRow := TStringList.Create;
  Form2.RzProgressBar1.TotalParts:= fahuoListMaxRow-3;
  Form2.Label1.Caption:= '正在去除发货清单重复，请稍候...';
+ Form2.Label1.Left := Round((Form2.Width - Form2.Label1.Width) / 2) ;
 for j:=2 to fahuoListMaxRow-2 do
 begin
+  Application.ProcessMessages;
   Form2.RzProgressBar1.PartsComplete:= j-2;
   for k:=j+1 to  fahuoListMaxRow-1 do
   begin
@@ -507,6 +479,26 @@ end;
         fahuolistPeihuoliangCol:=i;
    end;
  Button3.Click;
+end;
+
+procedure TForm1.N3Click(Sender: TObject);
+begin
+Form1.BitBtn3.Click;
+end;
+
+procedure TForm1.N4Click(Sender: TObject);
+begin
+Form1.BitBtn2.Click;
+end;
+
+procedure TForm1.N2Click(Sender: TObject);
+begin
+Form1.BitBtn1.Click;
+end;
+
+procedure TForm1.N6Click(Sender: TObject);
+begin
+Form5.show;
 end;
 
 end.
